@@ -1,4 +1,4 @@
 # This is where the draughts GUI will be produced 
-# Boom
+  # Bosh
 
 import pygame
