@@ -42,7 +42,7 @@ pygame.font.init()
 titleFont = pygame.font.SysFont("Calibri", 25, True, False)
         text = titleFont.render("Draughts AI", True, WHITE)
         window.blit(text, [840, 100])
-"""
+
 in workings of game
 
 import pygame
@@ -85,7 +85,7 @@ main()
 # Code for words on right hand side
 # Can be used for leadreboard etc 
 # Just need to adjust board WIDTH to 1000
-'''
+
 pygame.font.init()
 
 titleFont = pygame.font.SysFont("Calibri", 25, True, False)
