@@ -1,5 +1,3 @@
-# File for all constants 
-
 import pygame
 
 # Dimensions
@@ -12,4 +10,7 @@ SQUARE_SIZE = WIDTH // COLS
 RED = (255, 0, 0)
 BLUE = (10, 150, 140)
 WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
+BLACK = (50, 50, 50)
+
+# King sign
+CROWN = pygame.transform.scale(pygame.image.load("draughts/crown.png"), (45, 25))
