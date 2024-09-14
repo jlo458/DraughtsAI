@@ -1,5 +1,6 @@
 import pygame
-from .consts import BLACK, WHITE
+
+from .consts import BLACK, CROWN, WHITE
 
 
 class Piece:
@@ -27,4 +28,11 @@ class Piece:
         self.King = True
 
     def drawPiece(self, window):
-        pygame.draw.circle(window, self.colour, (self.x, self.y), 40)
+        pygame.draw.circle(window, self.colour, (self.x, self.y), 35)
+        if self.king:
+            window.blit(CROWN, (self.x - CROWN.get_width() / 2, self.y - CROWN.get_height() / 2))
+
+    def move(self, row, col):
+        self.row = row
+        self.col = col
+        self.position()
