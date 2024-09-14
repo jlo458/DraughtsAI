@@ -1,4 +1,6 @@
 import pygame
+
+# from draughts import piece
 from .consts import BLACK, BLUE, WHITE
 from .piece import Piece
 
@@ -36,6 +38,21 @@ class Board:
 
                 else:
                     self.board[row].append("x")
+
+    def select_piece(self, row, col):
+        return self.board[row][col]
+
+    def move(self, piece, row, col):        
+        self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
+        piece.move(row, col)
+
+        if row == 0 or row == 7:
+            piece.makeKing()
+            if piece.colour == WHITE:
+                self.whiteKings += 1
+
+            else:
+                self.blackKings += 1
 
     def drawAll(self, window):
         self.drawBoard(window)
