@@ -1,6 +1,5 @@
-# Fix movement bug, may need to switch pieces manually
-
 import pygame
+
 from draughts import board
 from draughts.board import Board
 from draughts.consts import HEIGHT, WIDTH
@@ -11,22 +10,33 @@ board = Board()
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Draughts AI")
 
+def findMouse(pos): 
+    x, y = pos 
+    row = y//100 
+    col = x//100 
+    return row, col
 
 def main():
     run = True
     clock = pygame.time.Clock()
     board = Board()
 
+    #piece = board.select_piece(0, 1)
+    #board.move(piece, 4, 3)
+
     while run:
         clock.tick(FPS)
-
-        piece = board.select_piece(0, 1)
-        #print(piece)
-        board.move(piece, 3, 4)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos() 
+                row, col = findMouse(pos)
+                piece = board.select_piece(row, col)
+                board.move(piece, 4, 3)
+
 
         # Game logic
 
