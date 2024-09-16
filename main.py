@@ -1,8 +1,9 @@
 import pygame
 
-from draughts import board
+from draughts import board, piece
 from draughts.board import Board
 from draughts.consts import HEIGHT, WIDTH
+from draughts.game import Game
 
 FPS = 10
 board = Board()
@@ -19,10 +20,7 @@ def findMouse(pos):
 def main():
     run = True
     clock = pygame.time.Clock()
-    board = Board()
-
-    #piece = board.select_piece(0, 1)
-    #board.move(piece, 4, 3)
+    game = Game(window)
 
     while run:
         clock.tick(FPS)
@@ -34,16 +32,13 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos() 
                 row, col = findMouse(pos)
-                piece = board.select_piece(row, col)
-                board.move(piece, 4, 3)
+                game.check(row, col) 
+                
+                
+                #board.move(piece, 4, 3)
 
 
-        # Game logic
-
-        # Board Maker
-        # board.buildBoard()
-        board.drawAll(window)
-        pygame.display.update()
+        game.update()
 
     pygame.quit()
 
