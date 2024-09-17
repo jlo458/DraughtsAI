@@ -11,6 +11,7 @@ RED = (255, 0, 0)
 BLUE = (10, 150, 140)
 WHITE = (255, 255, 255)
 BLACK = (50, 50, 50)
+GREY = (125, 125, 125)
 
 # King sign
 CROWN = pygame.transform.scale(pygame.image.load("draughts/crown.png"), (45, 25))
