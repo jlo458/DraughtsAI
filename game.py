@@ -1,4 +1,4 @@
-# Now be able to move pieces
+# Fix bugs
 
 import pygame
 from .board import Board
@@ -72,14 +72,19 @@ class Game:
             return None 
         
         else:
-            if col == 1: 
-                return None
+            return self._takeRight(row, col, direction)
+
+    def _takeRight(self, row, col, direction):
+        print(col) 
+        if col >= 6: 
+            return None
             
-            rightSpace = self.board.select_piece(row+(2*direction), col+2)
-            if rightSpace == 0: 
-                return row+(2*direction), col+2 
+        rightSpace = self.board.select_piece(row+(2*direction), col+2)
+        if rightSpace == 0:
+
+            return row+(2*direction), col+2 
             
-            return None 
+        return None 
 
     def checkLeft(self, row, col, colour): 
         if col == 0: 
@@ -98,23 +103,17 @@ class Game:
             return None 
         
         else:
-            if col == 1: 
-                return None
-            
-            leftSpace = self.board.select_piece(row+(2*direction), col-2)
-            if leftSpace == 0: 
-                return row+(2*direction), col-2 
-            
-            return None
-            
+            return self._takeLeft(row, col, direction)
 
-    
-  
-    def select(self, row, col): 
-        if self.selected: 
-            move = self._move(row, col)
-            if not move: 
-                self.selected = None
+    def _takeLeft(self, row, col, direction): 
+        if col <= 1: 
+            return None
+        leftSpace = self.board.select_piece(row+(2*direction), col-2)
+        if leftSpace == 0: 
+            return row+(2*direction), col-2 
+            
+        return None
+
 
     def drawMoves(self, moves): 
         for move in moves: 
@@ -122,12 +121,63 @@ class Game:
             col = move[0]
             pygame.draw.circle(self.window, GREY, (row*100 + 50, col*100 + 50), 15)
 
-    def _move(self): 
-        pass
+    def select(self, row, col): 
+        if self.selected: 
+            move = self._move(row, col)
+            if not move: 
+                self.selected = None
+                self.select(row, col)
 
-    def changeTurn(self): 
-        if self.turn == BLACK: 
-            self.turn == WHITE 
+        # Check
+        else:
+            piece = self.board.select_piece(row, col)
+            if piece != 0 and piece.colour == self.go: 
+                self.selected = piece
+                self.validMoves = self.possibleMoves(piece)
+                return True 
+        
+        return False
+    
+    def _move(self, row, col): 
+        #piece = self.board.select_piece(row, col)
+        if self.selected and (row, col) in self.validMoves:
+            oldRow = self.selected.row 
+            oldCol = self.selected.col
+            self.board.move(self.selected, row, col)
+            #print(self.selected.row, row-2)
+            if self.selected.row == oldRow-2 or self.selected.row == oldRow+2:
+                #print((oldRow+self.selected.row)//2, )
+                self.board.removePiece((oldRow+self.selected.row)//2, (oldCol+self.selected.col)//2)
+                moves = self.checkDouble(self.selected.colour)
+                if moves: 
+                    self.validMoves = moves
+
+            self.changeTurn() # Change later for double takes
 
         else: 
-            self.turn == BLACK
+            return False 
+        
+        return True
+
+    def checkDouble(self, colour):
+        moves = []
+        piece = self.selected 
+        if colour == BLACK or piece.king:
+            moves.append(self._takeLeft(piece.row, piece.col, -1))
+            moves.append(self._takeRight(piece.row, piece.col, -1))
+
+        else: 
+            moves.append(self._takeLeft(piece.row, piece.col, 1))
+            moves.append(self._takeRight(piece.row, piece.col, 1))
+
+        return moves
+
+
+
+    def changeTurn(self): 
+        self.validMoves = []
+        if self.go == BLACK: 
+            self.go = WHITE 
+
+        else: 
+            self.go = BLACK
