@@ -37,9 +37,10 @@ class Board:
                         self.board[row].append(0)
 
                 else:
-                    self.board[row].append("x")
+                    self.board[row].append(0)
 
     def select_piece(self, row, col):
+        print(row, col)
         return self.board[row][col]
 
     def move(self, piece, row, col):        
@@ -59,6 +60,10 @@ class Board:
         for row in range(8):
             for col in range(8):
                 object = self.board[row][col]
-                if object != 0 and object != "x":
+                if object != 0:
                     # print("Hello")
                     object.drawPiece(window)
+
+    def removePiece(self, row, col):
+        #print("Hello") 
+        self.board[row][col] = 0
