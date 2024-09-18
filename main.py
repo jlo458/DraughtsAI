@@ -32,8 +32,8 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos() 
                 row, col = findMouse(pos)
-                if board.select_piece(row, col) != 0:
-                    game.validMoves = game.check(row, col) 
+                #if board.select_piece(row, col) != 0:
+                game.select(row, col) 
                 
         game.update()
 
