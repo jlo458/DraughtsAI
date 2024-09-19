@@ -40,7 +40,7 @@ class Board:
                     self.board[row].append(0)
 
     def select_piece(self, row, col):
-        print(row, col)
+        #print(row, col)
         return self.board[row][col]
 
     def move(self, piece, row, col):        
@@ -65,5 +65,16 @@ class Board:
                     object.drawPiece(window)
 
     def removePiece(self, row, col):
-        #print("Hello") 
+        piece = self.board[row][col]
+        if piece.colour == BLACK: 
+            self.blackLeft -= 1
+            if self.blackLeft == 0: 
+                print("White wins!") 
+
+        else: 
+            self.whiteLeft -= 1 
+            if self.whiteLeft: 
+                print("Black wins!")
+
+        
         self.board[row][col] = 0
