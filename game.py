@@ -1,6 +1,5 @@
-# Fix bugs
-
 import pygame
+
 from .board import Board
 from .consts import BLACK, GREY, WHITE
 from .piece import Piece
@@ -36,13 +35,13 @@ class Game:
         colour = piece.colour
 
         if colour == BLACK or piece.king: 
-            moves.append(self.checkRight(row, col, colour))
-            moves.append(self.checkLeft(row, col, colour))
+            moves.append(self.checkRight(row, col, colour, -1))
+            moves.append(self.checkLeft(row, col, colour, -1))
 
 
         if colour == WHITE or piece.king: 
-            moves.append(self.checkRight(row, col, colour))
-            moves.append(self.checkLeft(row, col, colour))
+            moves.append(self.checkRight(row, col, colour, 1))
+            moves.append(self.checkLeft(row, col, colour, 1))
 
         return moves
 
@@ -56,13 +55,9 @@ class Game:
         return moves
 
 
-    def checkRight(self, row, col, colour): 
-        if col == 7: 
-            return None 
-        
-        direction = 1
-        if colour == BLACK: # Check that this works
-            direction = -1  
+    def checkRight(self, row, col, colour, direction): 
+        if col == 7 or (row+direction) > 7 or (row+direction) < 0: 
+            return None   
 
         rightSpace = self.board.select_piece(row+direction, col+1)
         if rightSpace == 0:
@@ -75,8 +70,8 @@ class Game:
             return self._takeRight(row, col, direction)
 
     def _takeRight(self, row, col, direction):
-        print(col) 
-        if col >= 6: 
+        #print(col) 
+        if col >= 6 or row+(2*direction) > 7 or row+(2*direction) < 0: 
             return None
             
         rightSpace = self.board.select_piece(row+(2*direction), col+2)
@@ -86,14 +81,10 @@ class Game:
             
         return None 
 
-    def checkLeft(self, row, col, colour): 
-        if col == 0: 
+    def checkLeft(self, row, col, colour, direction):  
+        if col == 0 or (row+direction)>7 or (row+direction)<0: 
             return None 
         
-        #moves = {} 
-        direction = 1
-        if colour == BLACK: # Check that this works
-            direction = -1  
 
         leftSpace = self.board.select_piece(row+direction, col-1)
         if leftSpace == 0:
@@ -106,7 +97,7 @@ class Game:
             return self._takeLeft(row, col, direction)
 
     def _takeLeft(self, row, col, direction): 
-        if col <= 1: 
+        if col <= 1 or row+(2*direction) > 7 or row+(2*direction) < 0: 
             return None
         leftSpace = self.board.select_piece(row+(2*direction), col-2)
         if leftSpace == 0: 
@@ -139,7 +130,7 @@ class Game:
         return False
     
     def _move(self, row, col): 
-        #piece = self.board.select_piece(row, col)
+        reMove = False
         if self.selected and (row, col) in self.validMoves:
             oldRow = self.selected.row 
             oldCol = self.selected.col
@@ -149,10 +140,18 @@ class Game:
                 #print((oldRow+self.selected.row)//2, )
                 self.board.removePiece((oldRow+self.selected.row)//2, (oldCol+self.selected.col)//2)
                 moves = self.checkDouble(self.selected.colour)
-                if moves: 
-                    self.validMoves = moves
+                self.validMoves = []
+                for move in moves: 
+                    if move is not None: 
+                        reMove = True
+                        self.validMoves.append(move)
 
-            self.changeTurn() # Change later for double takes
+            if not reMove:
+                self.changeTurn() # Change later for double takes
+
+            if self.selected.row == 7 or self.selected.row == 0:
+                #print("Whats good!") 
+                self.selected.makeKing()
 
         else: 
             return False 
@@ -161,14 +160,35 @@ class Game:
 
     def checkDouble(self, colour):
         moves = []
-        piece = self.selected 
+        piece = self.selected
+        row = piece.row
+        col = piece.col
         if colour == BLACK or piece.king:
-            moves.append(self._takeLeft(piece.row, piece.col, -1))
-            moves.append(self._takeRight(piece.row, piece.col, -1))
+            direction = -1
+            rightSpace = self.board.select_piece(row+direction, col+1)
+            print(rightSpace)
+            try: 
+                if rightSpace.colour != colour:
+                    print("Yo")
+                    moves.append(self._takeLeft(piece.row, piece.col, -1))
+                    moves.append(self._takeRight(piece.row, piece.col, -1))
+            
+            except: 
+                print("Bob")
 
-        else: 
-            moves.append(self._takeLeft(piece.row, piece.col, 1))
-            moves.append(self._takeRight(piece.row, piece.col, 1))
+        if colour == WHITE or piece.king: 
+            direction = -1
+            leftSpace = self.board.select_piece(row+direction, col-1)
+            try: 
+                if leftSpace.colour != colour:
+                    print("Wow")
+                    moves.append(self._takeLeft(piece.row, piece.col, 1))
+                    moves.append(self._takeRight(piece.row, piece.col, 1))
+            
+            except: 
+                print("Bob")
+
+        #print(moves)
 
         return moves
 
