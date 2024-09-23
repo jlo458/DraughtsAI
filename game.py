@@ -1,5 +1,4 @@
 import pygame
-
 from .board import Board
 from .consts import BLACK, GREY, WHITE
 from .piece import Piece
@@ -107,10 +106,12 @@ class Game:
 
 
     def drawMoves(self, moves): 
-        for move in moves: 
-            row = move[1]
-            col = move[0]
-            pygame.draw.circle(self.window, GREY, (row*100 + 50, col*100 + 50), 15)
+        for move in moves:
+            if move is not None: 
+                row = move[1]
+                col = move[0]
+                if row < 8 and row > -1 and col > -1 and row < 8:
+                    pygame.draw.circle(self.window, GREY, (row*100 + 50, col*100 + 50), 15)
 
     def select(self, row, col): 
         if self.selected: 
@@ -158,6 +159,30 @@ class Game:
         
         return True
 
+    def checkDoubleDirection(self, direction, row, col, colour, moves, piece): 
+        try: 
+            rightSpace = self.board.select_piece(row+direction, col+1)
+            if rightSpace.colour != colour:
+                moves.append(self._takeRight(piece.row, piece.col, direction))
+            
+        except: 
+            pass
+            #print("Bob")
+
+        try: 
+            leftSpace = self.board.select_piece(row+direction, col-1)
+            if leftSpace.colour != colour:
+                moves.append(self._takeLeft(piece.row, piece.col, direction))
+            
+        except: 
+            pass
+            #print("Bob2")
+
+        return moves
+
+
+
+    
     def checkDouble(self, colour):
         moves = []
         piece = self.selected
@@ -165,34 +190,13 @@ class Game:
         col = piece.col
         if colour == BLACK or piece.king:
             direction = -1
-            rightSpace = self.board.select_piece(row+direction, col+1)
-            print(rightSpace)
-            try: 
-                if rightSpace.colour != colour:
-                    print("Yo")
-                    moves.append(self._takeLeft(piece.row, piece.col, -1))
-                    moves.append(self._takeRight(piece.row, piece.col, -1))
-            
-            except: 
-                print("Bob")
+            moves = self.checkDoubleDirection(direction, row, col, colour, moves, piece)
 
         if colour == WHITE or piece.king: 
-            direction = -1
-            leftSpace = self.board.select_piece(row+direction, col-1)
-            try: 
-                if leftSpace.colour != colour:
-                    print("Wow")
-                    moves.append(self._takeLeft(piece.row, piece.col, 1))
-                    moves.append(self._takeRight(piece.row, piece.col, 1))
-            
-            except: 
-                print("Bob")
-
-        #print(moves)
+            direction = 1
+            moves = self.checkDoubleDirection(direction, row, col, colour, moves, piece)
 
         return moves
-
-
 
     def changeTurn(self): 
         self.validMoves = []
