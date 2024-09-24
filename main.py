@@ -1,5 +1,4 @@
 import pygame
-
 from draughts import board, piece
 from draughts.board import Board
 from draughts.consts import HEIGHT, WIDTH
@@ -41,7 +40,6 @@ def main():
 
 
 main()
-
 
 # Code for words on right hand side
 # Can be used for leadreboard etc
