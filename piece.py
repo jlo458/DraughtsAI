@@ -1,7 +1,5 @@
 import pygame
-
 from .consts import BLACK, CROWN, WHITE
-
 
 class Piece:
     def __init__(self, row, col, colour):
