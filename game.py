@@ -37,7 +37,6 @@ class Game:
             moves.append(self.checkRight(row, col, colour, -1))
             moves.append(self.checkLeft(row, col, colour, -1))
 
-
         if colour == WHITE or piece.king: 
             moves.append(self.checkRight(row, col, colour, 1))
             moves.append(self.checkLeft(row, col, colour, 1))
@@ -69,13 +68,11 @@ class Game:
             return self._takeRight(row, col, direction)
 
     def _takeRight(self, row, col, direction):
-        #print(col) 
         if col >= 6 or row+(2*direction) > 7 or row+(2*direction) < 0: 
             return None
             
         rightSpace = self.board.select_piece(row+(2*direction), col+2)
         if rightSpace == 0:
-
             return row+(2*direction), col+2 
             
         return None 
@@ -83,8 +80,7 @@ class Game:
     def checkLeft(self, row, col, colour, direction):  
         if col == 0 or (row+direction)>7 or (row+direction)<0: 
             return None 
-        
-
+    
         leftSpace = self.board.select_piece(row+direction, col-1)
         if leftSpace == 0:
             return row+direction, col-1
@@ -104,7 +100,6 @@ class Game:
             
         return None
 
-
     def drawMoves(self, moves): 
         for move in moves:
             if move is not None: 
@@ -120,7 +115,6 @@ class Game:
                 self.selected = None
                 self.select(row, col)
 
-        # Check
         else:
             piece = self.board.select_piece(row, col)
             if piece != 0 and piece.colour == self.go: 
@@ -136,7 +130,6 @@ class Game:
             oldRow = self.selected.row 
             oldCol = self.selected.col
             self.board.move(self.selected, row, col)
-            #print(self.selected.row, row-2)
             if self.selected.row == oldRow-2 or self.selected.row == oldRow+2:
                 #print((oldRow+self.selected.row)//2, )
                 self.board.removePiece((oldRow+self.selected.row)//2, (oldCol+self.selected.col)//2)
@@ -151,7 +144,6 @@ class Game:
                 self.changeTurn() # Change later for double takes
 
             if self.selected.row == 7 or self.selected.row == 0:
-                #print("Whats good!") 
                 self.selected.makeKing()
 
         else: 
@@ -167,7 +159,6 @@ class Game:
             
         except: 
             pass
-            #print("Bob")
 
         try: 
             leftSpace = self.board.select_piece(row+direction, col-1)
@@ -176,13 +167,9 @@ class Game:
             
         except: 
             pass
-            #print("Bob2")
 
         return moves
 
-
-
-    
     def checkDouble(self, colour):
         moves = []
         piece = self.selected
