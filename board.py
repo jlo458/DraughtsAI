@@ -1,9 +1,6 @@
 import pygame
-
-# from draughts import piece
 from .consts import BLACK, BLUE, WHITE
 from .piece import Piece
-
 
 class Board:
     def __init__(self) -> None:
@@ -40,7 +37,6 @@ class Board:
                     self.board[row].append(0)
 
     def select_piece(self, row, col):
-        #print(row, col)
         return self.board[row][col]
 
     def move(self, piece, row, col):        
@@ -61,7 +57,6 @@ class Board:
             for col in range(8):
                 object = self.board[row][col]
                 if object != 0:
-                    # print("Hello")
                     object.drawPiece(window)
 
     def removePiece(self, row, col):
@@ -75,6 +70,5 @@ class Board:
             self.whiteLeft -= 1 
             if self.whiteLeft: 
                 print("Black wins!")
-
-        
+                
         self.board[row][col] = 0
