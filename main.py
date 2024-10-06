@@ -1,8 +1,10 @@
 import pygame
+
 from draughts import board, piece
 from draughts.board import Board
-from draughts.consts import HEIGHT, WIDTH
+from draughts.consts import HEIGHT, WHITE, WIDTH
 from draughts.game import Game
+from MiniMax.algorithm import miniMax
 
 FPS = 10
 board = Board()
@@ -24,6 +26,10 @@ def main():
     while run:
         clock.tick(FPS)
 
+        if game.go == WHITE:
+            newBoard = miniMax(game.getBoard(), 4, True)[1] # game.getBoard not game.board
+            game.minimaxMove(newBoard)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -31,7 +37,6 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos() 
                 row, col = findMouse(pos)
-                #if board.select_piece(row, col) != 0:
                 game.select(row, col) 
                 
         game.update()
@@ -40,6 +45,7 @@ def main():
 
 
 main()
+
 
 # Code for words on right hand side
 # Can be used for leadreboard etc
