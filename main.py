@@ -27,7 +27,7 @@ def main():
         clock.tick(FPS)
 
         if game.go == WHITE:
-            newBoard = miniMax(game.getBoard(), 4, True)[1] # game.getBoard not game.board
+            newBoard = miniMax(game.getBoard(), 3, True)[1] # game.getBoard not game.board
             game.minimaxMove(newBoard)
 
         for event in pygame.event.get():
@@ -40,6 +40,13 @@ def main():
                 game.select(row, col) 
                 
         game.update()
+        #print(board.blackLeft)
+        if board.checkWinner(): 
+            if board.blackLeft == 0: 
+                print("White wins!")
+
+            else: 
+                print("Black wins!")
 
     pygame.quit()
 
