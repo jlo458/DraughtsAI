@@ -26,6 +26,16 @@ def main():
     while run:
         clock.tick(FPS)
 
+        if board.checkWinner(): 
+            print("Hello")
+            if board.blackLeft == 0: 
+                print("White wins!")
+
+            else: 
+                print("Black wins!")
+
+            run = False
+
         if game.go == WHITE:
             newBoard = miniMax(game.getBoard(), 3, True)[1] # game.getBoard not game.board
             game.minimaxMove(newBoard)
@@ -40,13 +50,7 @@ def main():
                 game.select(row, col) 
                 
         game.update()
-        #print(board.blackLeft)
-        if board.checkWinner(): 
-            if board.blackLeft == 0: 
-                print("White wins!")
 
-            else: 
-                print("Black wins!")
 
     pygame.quit()
 
