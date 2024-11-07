@@ -37,7 +37,12 @@ def main():
             run = False
 
         if game.go == WHITE:
-            newBoard = miniMax(game.getBoard(), 3, True)[1] # game.getBoard not game.board
+            if (board.blackKings) > 0:
+                newBoard = miniMax(game.getBoard(), 3, True, float("-inf"), float("inf"))[1] # game.getBoard not game.board
+
+            else:
+                newBoard = miniMax(game.getBoard(), 4, True, float("-inf"), float("inf"))[1]  
+
             game.minimaxMove(newBoard)
 
         for event in pygame.event.get():
