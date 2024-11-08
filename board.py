@@ -84,7 +84,7 @@ class Board:
         
         return False
 
-    def evaluateFunc(self): # Edit as you improve
+    def evaluateFunc(self): # Edit as you improve # Make more to check for best one
         w1 = 2
         w2 = 1
         score = w1 * (self.whiteLeft - self.blackLeft) + w2 * (self.whiteKings - self.blackKings)
