@@ -199,3 +199,47 @@ class Board:
             moves = self.checkDoubleDirection(direction, row, col, colour, moves, piece)
 
         return moves
+
+
+    # Another evaluation function
+    def evaluateFunc2(self, colour): # Edit as you improve
+        w1 = 3
+        w2 = 3
+        w3 = 1
+        neg = -1
+        middlePieces = 0
+
+        theColour = BLACK
+        if colour: 
+            theColour = WHITE
+
+        # Use this for other evaluation functions - make a bunch
+        # 3,3 3,5 4,2 4,4 
+
+        for row in range(3,5): 
+            for col in range(3,7,2):
+                if row == 4:
+                    col = (col-1)
+                #print(row, col)
+                piece = self.select_piece(row, col)
+                
+                try:
+                    if piece.colour == theColour: 
+                        middlePieces += 1
+
+                except: 
+                    pass
+
+
+        pieces = self.whiteLeft-self.blackLeft
+        kings = self.whiteKings + self.blackKings
+
+        win = float('inf')
+        if self.checkWinner(): 
+            return win
+        
+        if not colour:
+            neg = 1
+
+        score = neg*(w1*(pieces) + w2*(kings) + w3*(middlePieces))
+        return score
