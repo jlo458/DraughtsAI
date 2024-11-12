@@ -1,3 +1,5 @@
+#from curses import window
+
 import pygame
 
 from .board import Board
@@ -10,14 +12,18 @@ class Game:
         self._startGame()
         self.window = window
 
-    def update(self): 
-        self.board.drawAll(self.window)
-        try:
-            self.drawMoves(self.validMoves)
+    def update(self):
+        try: 
+            self.board.drawAll(self.window)
+            try:
+                self.drawMoves(self.validMoves)
+
+            except: 
+                pass
+            pygame.display.update()
 
         except: 
-            pass
-        pygame.display.update()
+            print(self.board)
 
     def _startGame(self): 
         self.selected = None
@@ -34,7 +40,7 @@ class Game:
             if move is not None: 
                 row = move[1]
                 col = move[0]
-                if row < 8 and row > -1 and col > -1 and row < 8:
+                if row < 8 and row > -1 and col > -1 and col < 8:
                     pygame.draw.circle(self.window, GREY, (row*100 + 50, col*100 + 50), 15)
 
     def select(self, row, col): 
@@ -70,6 +76,9 @@ class Game:
 
             if not reMove:
                 self.changeTurn() 
+
+            '''if self.selected.row == 7 or self.selected.row == 0:
+                self.selected.makeKing()'''
 
         else: 
             return False 
