@@ -2,7 +2,7 @@ import pygame
 
 from draughts import board, piece
 from draughts.board import Board
-from draughts.consts import HEIGHT, WHITE, WIDTH
+from draughts.consts import BLACK, HEIGHT, WHITE, WIDTH
 from draughts.game import Game
 from MiniMax.algorithm import miniMax
 
@@ -27,12 +27,9 @@ def main():
         clock.tick(FPS)
 
         if board.checkWinner(): 
-            print("Hello")
-            if board.blackLeft == 0: 
-                print("White wins!")
-
-            else: 
-                print("Black wins!")
+            winCol = board.checkWinner()
+            print(f"{winCol} is the winner!")
+            
 
             run = False
 
@@ -41,7 +38,7 @@ def main():
                 newBoard = miniMax(game.getBoard(), 3, True, float("-inf"), float("inf"))[1] # game.getBoard not game.board
 
             else:
-                newBoard = miniMax(game.getBoard(), 4, True, float("-inf"), float("inf"))[1]  
+                newBoard = miniMax(game.getBoard(), 5, True, float("-inf"), float("inf"))[1]  
 
             game.minimaxMove(newBoard)
 
