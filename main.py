@@ -1,3 +1,5 @@
+# Game is broken, do not copy
+
 import pygame
 
 from draughts import board, piece
