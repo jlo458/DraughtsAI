@@ -1,6 +1,3 @@
-# Minimax Algorithm 
-# This is where AI will work 
-
 import math
 from copy import deepcopy
 
@@ -12,7 +9,8 @@ from draughts.consts import BLACK, WHITE
 
 def miniMax(pos, depth, maxTurn, alpha, beta): 
     if depth == 0 or pos.checkWinner():
-        return pos.evaluateFunc(), pos # Change if pos is irrevevant 
+        #print(pos.checkWinner())
+        return pos.evaluateFunc2(maxTurn), pos # Change if pos is irrevevant 
     
     if maxTurn: 
         maxEval = float("-inf")
@@ -96,5 +94,3 @@ reMove = False
 
             if not reMove:
                 self.changeTurn()'''
-    
-
