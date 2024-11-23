@@ -1,6 +1,8 @@
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
-from tensorflow.keras.optimizers import Adam
+import tensorflow as ts 
+
+from keras._tf_keras.keras.models import Sequential
+from keras._tf_keras.keras.layers import Dense, Conv2D, Activation, Flatten, MaxPooling2D
+from keras._tf_keras.keras.optimizers import Adam 
 
 class DQNAgent:
     def makeModel(self):
