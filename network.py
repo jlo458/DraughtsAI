@@ -33,6 +33,7 @@ MIN_EPSILON = 0.001
 # Maybe incorporate stat setting if necessary
 
 # In progress
+# fix
 class draughtEnv(): # You will have input board, don't remake it, just swap pieces for 0, 1
     def __init__(self, pos) -> None:
         self.board = self.changeToNumBoard(pos)
