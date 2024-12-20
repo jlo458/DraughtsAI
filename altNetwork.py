@@ -1,23 +1,21 @@
 import random
-import time
 from collections import deque
-from pickle import TRUE
-from tabnanny import verbose
 
-import numpy
 import numpy as np
 import tensorflow as ts
 from keras._tf_keras.keras.callbacks import TensorBoard
 from keras._tf_keras.keras.layers import Conv2D, Dense, Dropout, Flatten, MaxPooling2D
 from keras._tf_keras.keras.models import Sequential
 from keras._tf_keras.keras.optimizers import Adam
-from tqdm import tqdm
 
-from deepQ.tensorBoardMod import ModifiedTensorBoard
 from draughts import board
 from draughts.board import Board
 from draughts.consts import WHITE
 from draughts.piece import Piece
+
+#from deepQ.tensorBoardMod import ModifiedTensorBoard
+#from draughts import board, consts, piece
+ 
 
 MODEL_NAME = "draughts-dqn"
 
@@ -38,12 +36,15 @@ MIN_EPSILON = 0.001
 
 class draughtEnv(): # You will have input board, don't remake it, just swap pieces for 0, 1
     def __init__(self, pos=None) -> None:
-        self.board = pos or Board.buildBoard()
-        self.startGame(pos)
+        board = Board()
+        self.board = board
+        #print(board.board)
+        self.startGame(self.board.board)
 
     def reset(self): 
-        pos = Board.buildBoard()
-        self.startGame(pos)  
+        board = Board()
+        self.board = board
+        self.startGame(self.board.board)  
         return self.vectorBoard  # check
 
     def startGame(self, pos): 
@@ -55,37 +56,34 @@ class draughtEnv(): # You will have input board, don't remake it, just swap piec
         self.done = False 
         self.episodeNum = 1
 
-    def findValidMoves(self, board): 
-        self.validMoves = self.board.possibleMoves()
-        return self.validMoves
-
     def vectorise(self, board):
-        for row in board: 
-            for col in range(len(row)): 
-                piece = row[col]
+        grid = np.zeros((8,8), dtype=int)
+        for row in range(8): 
+            for col in range(8): 
+                piece = board[row][col]
                 if isinstance(piece, Piece): 
                     if piece.colour == WHITE: 
                         if piece.king: 
-                            board[row][col] = 1
+                            grid[row][col] = 3
 
                         else: 
-                            board[row][col] = 3
+                            grid[row][col] = 1
 
                     else: 
                         if piece.king: 
-                            board[row][col] = 2
+                            grid[row][col] = 4
 
                         else: 
-                            board[row][col] = 4
+                            grid[row][col] = 2
 
-        return board
+        return grid
 
     def step(self, action, go):
+        reward = 0
         done = False 
         bl, bk, wl, wk = self.board.takeInfo()
 
-        theMove = self.validMoves[action]
-        self.board = self.board.move(theMove)
+        self.board = self.validMoves[action]
 
         self.episodeNum += 1 
 
@@ -113,47 +111,70 @@ class draughtEnv(): # You will have input board, don't remake it, just swap piec
             reward -= 900
             done = True
 
-        return self.vectorise(self.board), reward, done
+        return self.vectorise(self.board.board), reward, done, {}
 
 class DQN_Agent: 
-    def __init__(self, stateShape, actionSize, bufferSize = 2000):
+    def __init__(self, stateShape = (8,8,1), actionSize = 32, bufferSize = 2000):
         self.stateShape = stateShape
         self.actionSize = actionSize
-        self.model = self.buildModel(stateShape, actionSize)
-        self.targetModel = self.buildModel((stateShape, actionSize))
+        self.model = self.buildModel(self.stateShape, self.actionSize)
+        self.targetModel = self.buildModel(self.stateShape, self.actionSize)
         self.memory = ReplayBuffer(bufferSize)
         self.epsilon = 1.0
+        self.action_map = {}
 
 
-    def buildModel(stateShape, actionSize):
+    def buildModel(self, stateShape, actionSize):
         model = Sequential()
         model.add(Conv2D(32, (3, 3), activation='relu', input_shape=stateShape))
         model.add(Flatten())
         model.add(Dense(128, activation='relu'))
         model.add(Dense(actionSize, activation='linear'))
-        model.compile(optmiser=Adam(learning_rate=0.001), loss='mse')
+        model.compile(optimizer=Adam(learning_rate=0.001), loss='mse')
         return model 
     
     def act(self, state, valMoves): 
-        if np.random.random() < self.epsilon: 
+        if len(valMoves) == 0:
+            raise ValueError("No valid moves available")
+        
+        
+
+        #print(np.random.random())
+        if np.random.random() < self.epsilon:
+            #print("Hello") 
             action_idx = np.random.randint(len(valMoves))
         else:
             q_values = self.model.predict(state[np.newaxis], verbose=0)
-            action_idx = np.argmax(q_values[:len(valMoves)])  # Restrict to valid moves
-        return self.action_map[action_idx]  # Convert to actual move
+            valid_indices = list(self.action_map.keys())  # Indices of valid actions
+            try:
+                q_values = q_values.flatten()
+                valid_q_values = q_values[valid_indices]  
+
+            except: 
+                raise ValueError(f"VI: {valid_indices}, QVs; {q_values}")
+            
+            #print(f"VI {valid_indices}")
+            #print(f"VQ {valid_indices}")
+
+            # Choose the action with the highest Q-value
+            best_valid_idx = np.argmax(valid_q_values)
+            action_idx = valid_indices[best_valid_idx] 
+       
+
+        return action_idx  # Convert to actual move
     
     def train(self, batchSize): 
-        if self.memorySize < batchSize: 
+        if self.memory.size() < batchSize: 
             return
         
         batch = self.memory.sample(batchSize)
         states, actions, rewards, nextStates, dones = map(np.array, zip(*batch))
 
         current_qs = self.model.predict(states)
-        next_qs = self.target_model.predict(nextStates)
+        next_qs = self.targetModel.predict(nextStates)
         for i in range(batchSize):
             max_future_q = np.max(next_qs[i]) if not dones[i] else 0
-            current_qs[i, actions[i]] = rewards[i] + self.gamma * max_future_q
+            current_qs[i, actions[i]] = rewards[i] + GAMMA * max_future_q
 
         self.model.fit(states, current_qs, verbose=0)
 
@@ -180,6 +201,10 @@ class ReplayBuffer:
         return len(self.buffer)
 
 # sort this out
+
+'''STATE_SHAPE = (8, 8, 1)  # 8x8 board with a single channel
+ACTION_SIZE = 32 
+
 env = draughtEnv()
 agent = DQN_Agent()
 batchSize = 64
@@ -191,6 +216,9 @@ for episode in range(EPISODES):
 
     while not done: 
         validMoves = env.findValidMoves()
+        if not validMoves:
+            break
+
         env.action_map = {i: move for i, move in enumerate(validMoves)}
 
         action = agent.act(state, env.validMoves)
@@ -198,10 +226,17 @@ for episode in range(EPISODES):
         agent.memory.add((state, action, reward, nextState, done))
         agent.train(batchSize)
         state = nextState 
-        totalReward = reward
+        totalReward += reward
 
-agent.updateTargetModel()
-print(f"Episode {episode}, Total Reward: {totalReward}")
+        if env.go == 1: 
+            env.go = 2
+
+        else: 
+            env.go = 1
+
+    if EPISODES%100 == 0: 
+        agent.updateTargetModel()'''
+
 
 # Proper reward system 
 
@@ -231,4 +266,8 @@ class draughtEnv:
         if len(self.validMoves) == 0:
             reward -= 50
         
-        return reward, done'''
+        return reward, done
+
+def findValidMoves(self): 
+        self.validMoves = self.board.possibleMoves()
+        return self.validMoves'''
