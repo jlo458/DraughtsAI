@@ -22,6 +22,9 @@ class Board:
 
         pygame.display.flip()
 
+    def takeInfo(self): 
+        return self.blackLeft, self.blackKings, self.whiteLeft, self.whiteKings
+
     def buildBoard(self):
         for row in range(8):
             self.board.append([])
@@ -64,14 +67,12 @@ class Board:
 
     def removePiece(self, row, col):
         piece = self.board[row][col]
-        print(self.whiteLeft)
-        print(self.whiteKings)
-        try:
+        if isinstance(piece, Piece):
+            #print(self.blackLeft, self.whiteLeft, piece.colour)
             if piece.colour == BLACK: 
                 if piece.king: 
                     self.blackKings -= 1
                 self.blackLeft -= 1
-                #self.checkWinner() 
 
             else: 
                 if piece.king: 
@@ -81,18 +82,16 @@ class Board:
 
             self.board[row][col] = 0
 
-        except:
-            pass 
-            #print(row, col)
+        #print(self.blackLeft, self.blackKings, self.whiteLeft, self.whiteKings)
 
     def checkWinner(self): 
         if self.blackLeft == 0: 
-            return WHITE
+            return WHITE, 1  # Make sure to change for the rest of the code
 
         elif self.whiteLeft == 0: 
-            return BLACK
+            return BLACK, 2
         
-        return False
+        return None
 
     def evaluateFunc2(self, colour): # Edit as you improve
         w1 = 3
@@ -100,10 +99,13 @@ class Board:
         w3 = 1
         neg = -1
         middlePieces = 0
+        win = float('-inf')
 
         theColour = BLACK
         if colour: 
             theColour = WHITE
+            neg = 1
+            win = float('inf')
 
         # Use this for other evaluation functions - make a bunch
         # 3,3 3,5 4,2 4,4 
@@ -126,14 +128,11 @@ class Board:
         pieces = self.whiteLeft - self.blackLeft
         kings = self.whiteKings - self.blackKings
 
-        win = float('inf')
-        if self.checkWinner() != False: 
-            return win
-        
-        if colour:
-            neg = 1
+        if self.checkWinner(): 
+            return win            
 
         score = neg*(w1*(pieces) + w2*(kings) + w3*(middlePieces))
+        #print(score, middlePieces, pieces, kings)
         return score
 
     def evaluateFunc(self, col): # Edit as you improve
@@ -180,13 +179,13 @@ class Board:
         return moves
 
 
-    '''def check(self, row, col): 
+    def check(self, row, col): 
         moves = None
         piece = self.board.select_piece(row, col)
         if type(piece) is not int and piece.colour == self.go: 
             moves = self.possibleMoves(piece) 
 
-        return moves'''
+        return moves
 
 
     def checkRight(self, row, col, colour, direction): 
