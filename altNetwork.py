@@ -55,6 +55,7 @@ class draughtEnv(): # You will have input board, don't remake it, just swap piec
         self.reward = 0
         self.done = False 
         self.episodeNum = 1
+        self.numMoves = 0
 
     def vectorise(self, board):
         grid = np.zeros((8,8), dtype=int)
@@ -79,6 +80,8 @@ class draughtEnv(): # You will have input board, don't remake it, just swap piec
         return grid
 
     def step(self, action, go):
+        self.numMoves += 1 
+
         reward = 0
         done = False 
         bl, bk, wl, wk = self.board.takeInfo()
@@ -98,6 +101,10 @@ class draughtEnv(): # You will have input board, don't remake it, just swap piec
         reward += ((wla - wl)+(bl - bla))*whiteGo*miniWeight
         reward += ((wka - wk)+(bk - bka))*whiteGo*miniWeight*2
 
+        if self.numMoves >= 60:
+            reward -= 10
+            done = True
+
         if self.board.checkWinner():
             if self.board.checkWinner()[1] == go:
                 reward += 1000 
@@ -110,6 +117,8 @@ class draughtEnv(): # You will have input board, don't remake it, just swap piec
         if len(self.validMoves) == 0:
             reward -= 900
             done = True
+
+        reward -= 0.1*(self.numMoves)
 
         return self.vectorise(self.board.board), reward, done, {}
 
