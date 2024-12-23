@@ -409,3 +409,60 @@ class ReplayBuffer:
     def size(self):
         return len(self.buffer)
 
+# new stuff
+import csv
+
+with open("rewards.csv", "w", newline="") as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(["Episode", "Reward"])
+
+
+    for episode in range(EPISODES): 
+        agent = agentB
+        state = env.reset()
+        totalRewardW = 0 
+        totalRewardB = 0
+        done = False 
+
+
+        while not done: 
+            if env.go == 1: 
+                colour = WHITE
+
+            else: 
+                colour = BLACK
+            
+            env.validMoves = getAllMoves(env.board, colour)
+            if not env.validMoves:
+                break
+
+            agent.action_map = {i: move for i, move in enumerate(env.validMoves)}
+
+            action_idx = agent.act(state, env.validMoves)
+            nextState, reward, done, _ = env.step(action_idx, env.go)
+            agent.memory.add((state, action_idx, reward, nextState, done))
+            agent.train(batchSize)
+            state = nextState 
+            
+
+            if env.go == 1: 
+                totalRewardW += reward
+                env.go = 2
+                agent = agentB
+
+            else: 
+                totalRewardB += reward
+                env.go = 1
+                agent = agentW
+
+        print(episode)
+        if episode%50 == 0: 
+            agent.updateTargetModel()
+            print(f"Total Reward for White: {totalRewardW}, Episode: {episode}")
+            print(f"Total Reward for Black: {totalRewardB}, Episode: {episode}")
+
+        if episode%500 == 0: 
+            agentW.model.save_weights(f"white_{episode}_.weights.h5")
+            agentB.model.save_weights(f"black_{episode}_.weights.h5")
+            writer.writerow([episode, totalRewardB])
+
