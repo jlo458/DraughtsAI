@@ -466,3 +466,15 @@ with open("rewards.csv", "w", newline="") as csvfile:
             agentB.model.save_weights(f"black_{episode}_.weights.h5")
             writer.writerow([episode, totalRewardB])
 
+# also add game phase stuff to step 
+
+    def gamePhase(self, board): 
+        if (board.blackLeft + board.whiteLeft) > 16: 
+            return 5 
+        
+        elif (board.blackLeft + board.whiteLeft) > 10:
+            return 10 
+        
+        else: 
+            return 20
+
