@@ -18,12 +18,11 @@ def miniMax(pos, depth, maxTurn, alpha, beta):
         for move in getAllMoves(pos, WHITE): 
             evalScore = miniMax(move, depth-1, False, alpha, beta)[0] 
             maxEval = max(evalScore, maxEval)
-
-            alpha = max(maxEval, alpha) 
-            if alpha >= beta:
+ 
+            if maxEval >= beta:
                 #print(f"Alphabeta pruning depth {depth}") 
                 break
-
+            alpha = max(maxEval, alpha)
             if maxEval == evalScore: 
                 bestMove = move 
 
@@ -33,14 +32,18 @@ def miniMax(pos, depth, maxTurn, alpha, beta):
         minEval = float("inf")
         bestMove = None 
         for move in getAllMoves(pos, BLACK): # add game input
+            #print(move)
             evalScore, _ = miniMax(move, depth-1, True, alpha, beta)
             minEval = min(evalScore, minEval)
 
-            beta = min(minEval, beta) 
-            if alpha <= beta: 
+            #print(minEval, beta, alpha, evalScore, bestMove)
+
+            
+            if minEval <= alpha: 
                 #print(f"Alphabeta pruning depth {depth}") 
                 break
 
+            beta = min(minEval, beta) 
             if minEval == evalScore: 
                 bestMove = move 
 
