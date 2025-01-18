@@ -37,7 +37,7 @@ def miniMax(pos, depth, maxTurn, alpha, beta):
             minEval = min(evalScore, minEval)
 
             beta = min(minEval, beta) 
-            if alpha >= beta: 
+            if alpha <= beta: 
                 #print(f"Alphabeta pruning depth {depth}") 
                 break
 
@@ -75,22 +75,3 @@ def simMove(piece, move, testBoard):
                 testBoard = simMove(piece, move, testBoard)
 
     return testBoard
-    
-
-'''
-reMove = False
-        if self.selected and (row, col) in self.validMoves:
-            oldRow = self.selected.row 
-            oldCol = self.selected.col
-            self.board.move(self.selected, row, col)
-            if self.selected.row == oldRow-2 or self.selected.row == oldRow+2:
-                self.board.removePiece((oldRow+self.selected.row)//2, (oldCol+self.selected.col)//2)
-                moves = self.board.checkDouble(self.selected, self.selected.colour)
-                self.validMoves = []
-                for move in moves: 
-                    if move is not None: 
-                        reMove = True
-                        self.validMoves.append(move)
-
-            if not reMove:
-                self.changeTurn()'''
