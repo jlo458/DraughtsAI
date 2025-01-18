@@ -94,18 +94,17 @@ class Board:
         return None
 
     def evaluateFunc2(self, colour): # Edit as you improve
-        w1 = 3
-        w2 = 3
+        w1 = 2
+        w2 = 4
         w3 = 1
-        neg = -1
+        #neg = -1
         middlePieces = 0
-        win = float('-inf')
+        winB = float('-inf')
+        winW = float('inf')
 
         theColour = BLACK
         if colour: 
             theColour = WHITE
-            neg = 1
-            win = float('inf')
 
         # Use this for other evaluation functions - make a bunch
         # 3,3 3,5 4,2 4,4 
@@ -128,26 +127,18 @@ class Board:
         pieces = self.whiteLeft - self.blackLeft
         kings = self.whiteKings - self.blackKings
 
-        if self.checkWinner(): 
-            return win            
+        if not self.checkWinner(): 
+            pass
 
-        score = neg*(w1*(pieces) + w2*(kings) + w3*(middlePieces))
+        elif self.checkWinner()[1] == 1: 
+            return winW
+
+        elif self.checkWinner()[1] == 2:
+            return winB            
+
+        score = w1*(pieces) + w2*(kings) + w3*(middlePieces)
         #print(score, middlePieces, pieces, kings)
         return score
-
-    def evaluateFunc(self, col): # Edit as you improve
-        w1 = 2
-        w2 = 1
-        neg = 1
-        win = float('inf')
-        if self.checkWinner(): 
-            return win    
-
-        if not col: 
-            neg = -1
-
-        score = w1 * (self.whiteLeft - self.blackLeft) + w2 * (self.whiteKings - self.blackKings) 
-        return neg*(score)
 
     def getAllPieces(self, colour):
         validPieces = [] 
