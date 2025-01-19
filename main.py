@@ -1,4 +1,4 @@
-# Game is broken, do not copy
+# MiniMax needs to be more aggressive
 
 import pygame
 
