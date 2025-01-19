@@ -5,4 +5,5 @@
 
 #### GUI and Minimax sorted (minimax may have some issues) 
 #### DeepQ network learning now 
-#### Repo is currently a bit of a mess so bare with me
+#### I'm attempting to train it against MiniMax, this may take a while
+#### Repo is a bit of a mess right now, will be cleaned up once sorted
