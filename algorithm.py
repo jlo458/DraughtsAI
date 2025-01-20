@@ -50,7 +50,7 @@ def miniMax(pos, depth, maxTurn, alpha, beta):
         return minEval, bestMove
     
 
-def getAllMoves(pos, colour): 
+def getAllMoves(pos, colour):   # Need to try to make MiniMax always take if possible
     positions = []
     for piece in pos.getAllPieces(colour): 
         validMoves = pos.possibleMoves(piece)
