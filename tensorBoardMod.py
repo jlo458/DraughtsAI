@@ -1,3 +1,5 @@
+# old altNetwork, modified tensorboard, old Board class, main.py, gamePhase code 
+
 '''import tensorflow as tf
 from keras._tf_keras.keras.callbacks import TensorBoard
 
