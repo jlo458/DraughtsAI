@@ -1,3 +1,5 @@
+# Probably redundant
+
 import random
 import time
 from collections import deque
