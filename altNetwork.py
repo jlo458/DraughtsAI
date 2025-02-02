@@ -142,17 +142,6 @@ class DQN_Agent:
         model.compile(optimizer=Adam(learning_rate=0.001), loss='mse')
         return model '''
 
-    def buildModel(self, stateShape, actionSize):
-        model = Sequential()
-        model.add(Conv2D(32, (3, 3), activation='relu', input_shape=stateShape))
-        model.add(Conv2D(64, (3, 3), activation='relu'))  # Added another Conv layer
-        model.add(Flatten())
-        model.add(Dense(128, activation='relu'))
-        model.add(Dense(64, activation='relu'))  # Added another Dense layer
-        model.add(Dense(actionSize, activation='linear'))
-        model.compile(optimizer=Adam(learning_rate=0.001), loss='mse')
-        return model
-
     def buildModel(self, stateShape, actionSize):  # New Model
         model = Sequential()
         model.add(Conv2D(32, (3, 3), activation='relu', input_shape=stateShape))
