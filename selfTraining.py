@@ -15,8 +15,6 @@ from deepQ.altNetwork import DQN_Agent, draughtEnv
 from draughts.consts import BLACK, WHITE
 
 
-EPISODES = 15_000
- 
 def cleanUp(filePattern, lastN):
     modelFiles = [f for f in os.listdir(".") if re.match(filePattern, f)]
 
