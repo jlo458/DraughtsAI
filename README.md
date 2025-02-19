@@ -7,3 +7,5 @@
 #### DeepQ network learning now 
 #### I'm attempting to train it against MiniMax, this may take a while
 #### Repo is a bit of a mess right now, will be cleaned up once sorted
+
+#### Side note - all file with SCRAP are spare files that have no particular use atm
