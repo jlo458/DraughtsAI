@@ -1,5 +1,3 @@
-#from curses import window
-
 import pygame
 
 from .board import Board
