@@ -1,4 +1,3 @@
-
 import pygame
 
 from .consts import BLACK, BLUE, WHITE
