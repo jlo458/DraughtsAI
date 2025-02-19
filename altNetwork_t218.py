@@ -1,3 +1,7 @@
+# This code is for tensorflow 2.18 
+# This was before I got a GPU, and worked solely with CPU
+# AltNetwork_t210 works with tensorflow 2.10 (and with the appropriate CUDA and cuDNN files)
+
 import random
 from collections import deque
 
@@ -13,28 +17,14 @@ from draughts.board import Board
 from draughts.consts import WHITE
 from draughts.piece import Piece
 
-#from deepQ.tensorBoardMod import ModifiedTensorBoard
-#from draughts import board, consts, piece
- 
-
-MODEL_NAME = "draughts-dqn"
-
-'''REPLAY_MEMORY_SIZE = 50_000
-MIN_REPLAY_MEMORY_SIZE = 1_000
-MINIBATCH_SIZE = 64
-UPDATE_TARGET_VALUE = 100'''
-
 GAMMA = 0.99 # Discount factor - higher = future rewards are more important than if it were 0.9
-
-# REWARD ...
 
 EPISODES = 20_000 
 
-#epsilon = 1 
 EPSILON_DECAY = 0.99975 
 MIN_EPSILON = 0.001 
 
-class draughtEnv(): # You will have input board, don't remake it, just swap pieces for 0, 1
+class draughtEnv(): 
     def __init__(self, pos=None) -> None:
         board = Board()
         self.board = board
@@ -96,7 +86,7 @@ class draughtEnv(): # You will have input board, don't remake it, just swap piec
         if go == 1: 
             whiteGo = 1
 
-        # make reward 
+        # makes reward 
         miniWeight = 1
         reward += ((wla - wl)+(bl - bla))*whiteGo*miniWeight
         reward += ((wka - wk)+(bk - bka))*whiteGo*miniWeight*2
@@ -132,7 +122,7 @@ class DQN_Agent:
         self.epsilon = 1.0
         self.action_map = {}
 
-
+    # First model
     '''def buildModel(self, stateShape, actionSize):
         model = Sequential()
         model.add(Conv2D(32, (3, 3), activation='relu', input_shape=stateShape))
@@ -157,11 +147,7 @@ class DQN_Agent:
         if len(valMoves) == 0:
             raise ValueError("No valid moves available")
         
-        
-
-        #print(np.random.random())
         if np.random.random() < self.epsilon:
-            #print("Hello") 
             action_idx = np.random.randint(len(valMoves))
         else:
             q_values = self.model.predict(state[np.newaxis], verbose=0)
@@ -172,15 +158,11 @@ class DQN_Agent:
 
             except: 
                 raise ValueError(f"VI: {valid_indices}, QVs; {q_values}")
-            
-            #print(f"VI {valid_indices}")
-            #print(f"VQ {valid_indices}")
 
             # Choose the action with the highest Q-value
             best_valid_idx = np.argmax(valid_q_values)
             action_idx = valid_indices[best_valid_idx] 
        
-
         return action_idx  # Convert to actual move
     
     def train(self, batchSize): 
@@ -219,75 +201,3 @@ class ReplayBuffer:
 
     def size(self):
         return len(self.buffer)
-
-# sort this out
-
-'''STATE_SHAPE = (8, 8, 1)  # 8x8 board with a single channel
-ACTION_SIZE = 32 
-
-env = draughtEnv()
-agent = DQN_Agent()
-batchSize = 64
-
-for episode in range(EPISODES): 
-    state = env.reset()
-    totalReward = 0 
-    done = False 
-
-    while not done: 
-        validMoves = env.findValidMoves()
-        if not validMoves:
-            break
-
-        env.action_map = {i: move for i, move in enumerate(validMoves)}
-
-        action = agent.act(state, env.validMoves)
-        nextState, reward, done, _ = env.step(action)
-        agent.memory.add((state, action, reward, nextState, done))
-        agent.train(batchSize)
-        state = nextState 
-        totalReward += reward
-
-        if env.go == 1: 
-            env.go = 2
-
-        else: 
-            env.go = 1
-
-    if EPISODES%100 == 0: 
-        agent.updateTargetModel()'''
-
-
-# Proper reward system 
-
-'''
-class draughtEnv:
-    ...
-    def step(self, action):
-        ...
-        # Compute changes in piece counts
-        reward = 0
-        bla, bka, wla, wka = self.board.takeInfo()
-
-        # Reward based on capturing pieces
-        reward += (wl - wla) - (bl - bla)  # Difference in lost pieces
-        reward += 2 * ((wk - wka) - (bk - bka))  # Higher weight for kings
-
-        # Reward for winning or penalty for losing
-        if self.board.checkWinner() == 1:  # White wins
-            reward += 100
-            done = True
-        elif self.board.checkWinner() == -1:  # Black wins
-            reward -= 100
-            done = True
-        else:
-            done = False
-
-        if len(self.validMoves) == 0:
-            reward -= 50
-        
-        return reward, done
-
-def findValidMoves(self): 
-        self.validMoves = self.board.possibleMoves()
-        return self.validMoves'''
